@@ -1,9 +1,19 @@
+#
+# Note to the finder
+#
+# After submission and credit, this code was discovered to have logic errors
+#
+# Specifically if there are multiple * touching a number, it will
+# potentially miss one of them when counting numbers touching *s
+# towards later numbers
+#
 import re
 
 debugging = True
 
 # Read the input file
-foo = open('input3-1.txt', 'r').readlines()
+#foo = open('input3-1.txt', 'r').readlines()
+foo = open('input3-test1.txt', 'r').readlines()
 
 
 # add extra lines for padding

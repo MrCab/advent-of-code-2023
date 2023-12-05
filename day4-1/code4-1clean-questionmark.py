@@ -2,40 +2,62 @@ import re
 import argparse
 
 
-
+# 90% using this class as a namespace
 class ScratcherSolver :
 
   DEFAULT_FILE = "input4.txt"
   DAY = 4
-  DEBUG = False
+
+  verbosePrint = False
+
+  scratchCards = []
+  sumTotal = 0
+
+  ####
+  # Leaving the constructor here so I remember how to do it.
+  # should proabbly put the "constant" regex compiling here
+
+  def __init__( self ):
+    self.sumTotal = 0
 
   #####
-  def debugPrint( self, message ) :
-    if self.DEBUG :
-      print( message )
-  #####
-  def readInput( self, fileName ) :
-    foo = open('input4.txt', 'r').readlines()
 
-    #trim the lines
-    return [ re.sub("\n", "", x ) for x in foo ]
-  #####
-
-  def main(self) :
-
+  def processArguments( self ) :
     # parse the input, if any
     parser = argparse.ArgumentParser(description=f'AOC2023 Puzzle Day { self.DAY }')
     parser.add_argument("-i", "--input", help="Input File if not default", action='store', default=self.DEFAULT_FILE )
     parser.add_argument("-v", "--verbose", help="Print verbose test output", action='store_true', default=False )
     args = parser.parse_args()
 
-    self.DEBUG = args.verbose
-    print( self.DEBUG )
+    self.verbosePrint = args.verbose
 
     # process the input file
-    foo = self.readInput( args.input )
+    self.readInput( args.input )
 
-    sumtotal = 0
+  #####
+
+  def debugPrint( self, message ) :
+    if self.verbosePrint :
+      print( message )
+
+  #####
+
+  def readInput( self, fileName ) :
+    foo = open('input4.txt', 'r').readlines()
+
+    #trim the lines
+    self.scratchCards = [ re.sub("\n", "", x ) for x in foo ]
+
+  #####
+
+  def main(self) :
+
+    self.processArguments()
+
+    # because I'm refactoring and this code already assumes these are local
+    foo = self.scratchCards
+    sumtotal = self.sumTotal
+
     cardLineRegex = re.compile( '^Card\s+(\d+):([ 0-9]+)\|(.*)$' )
 
     for bar in foo :

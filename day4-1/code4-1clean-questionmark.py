@@ -75,6 +75,8 @@ class ScratcherSolver :
         self.debugPrint( "$$$$MY NUMS = |" + myNums + "|" )
 
 
+        # Because everyone in discord likes list comprehensions.
+        # in caps because yes, I was in a mood at the time
         MATCHCOUNT = len( [ x for x in winners if re.search( '\s' + x + '\s' , myNums ) ]  ) - 2
         self.debugPrint( "=====MATCHCOUNT = " + str( MATCHCOUNT ) )
 
@@ -82,6 +84,8 @@ class ScratcherSolver :
         for num in winners :
           if len( num ) == 0 : continue
 
+          # the second line here is checking if there are duplicate winning numbers in my numbers
+          # 'Card 55: 1 2 3 | 4 5 2 2 2 2 6'
           self.debugPrint( num + " - " + str( re.search( '\s' + num + '\s' , myNums ) ) )
           self.debugPrint( num + " - " + str( len( re.split( '\s' + num + '\s' , myNums ) ) - 1 ) )
 

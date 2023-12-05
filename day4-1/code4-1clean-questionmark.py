@@ -46,7 +46,7 @@ class ScratcherSolver :
     foo = open('input4.txt', 'r').readlines()
 
     #trim the lines
-    self.scratchCards = [ re.sub("\n", "", x ) for x in foo ]
+    self.scratchCards = [ x.rstrip("\n") for x in foo ]
 
   #####
 

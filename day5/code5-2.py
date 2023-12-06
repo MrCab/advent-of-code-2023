@@ -62,6 +62,18 @@ class SeedSolver :
     # process the input file
     self.readInput( args.input )
 
+  def slowProcessInput( self ) :
+    # The first line is seed IDs
+    seedRanges = re.split( "\D+", self.seedInfo[0] )[1:]
+
+    i = 0
+    while i < len( seedRanges ) :
+      self.seeds = self.parseSeedRanges( seedRanges[i:i+1] )
+      self.processInput()
+      self.processSeedLocations()
+      print( self.getLowestField() )
+      i+= 2
+
   #####
 
   def parseSeedRanges( self, seedInput ) :
@@ -93,10 +105,6 @@ class SeedSolver :
   #####
 
   def processInput( self ) :
-
-    # The first line is seed IDs
-    self.seeds = self.parseSeedRanges( re.split( "\D+", self.seedInfo[0] )[1:] )
-    DebugPrinter.debugPrint( self.seeds )
 
     # start reading from line 3
     i = 2
@@ -169,9 +177,12 @@ class SeedSolver :
   def main(self) :
 
     self.processArguments()
-    self.processInput()
-    self.processSeedLocations()
-    print( self.getLowestField() )
+
+    # so plugging in all the numbers at once breaks things...so do it a little at a time
+    self.slowProcessInput()
+    #self.processInput()
+    #self.processSeedLocations()
+    #print( self.getLowestField() )
 
 
 if __name__ == "__main__":

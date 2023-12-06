@@ -14,17 +14,10 @@ class DebugPrinter :
 class SeedMap :
 
   def __init__( self ):
-    self.seed = 0
-    self.soil = 0
-    self.fertalizer = 0
-    self.water = 0
-    self.light = 0
-    self.humidity = 0
-    self.location = 0
     self.thingsMapped = {}
 
 class SeedMapper :
-  def __init__( self, ss=0, ds=0, r=0 ):
+  def __init__( self, ds=0, ss=0, r=0 ):
     self.sourceStart = ss
     self.destStart = ds
     self.range = r
@@ -33,12 +26,14 @@ class SeedMapper :
 # 90% using this class as a namespace
 class SeedSolver :
 
+  #DEFAULT_FILE = "day5\\input5-sample.txt"
   DEFAULT_FILE = "day5\\input5.txt"
   DAY = 5
   verbosePrint = True
 
-  fields = []
+  allTheSeeds = []
   mappers = {}
+
 
   mapTextRegex = re.compile( "([a-zA-Z]+)-to-([a-zA-Z]+) map:" )
   # skipping in favor of just splitting the line
@@ -51,7 +46,7 @@ class SeedSolver :
   def __init__( self ):
     self.lowest = -1
     self.mappers = {}
-    self.fields = []
+    self.allTheSeeds = []
 
   #####
 
@@ -80,7 +75,8 @@ class SeedSolver :
   def processInput( self ) :
 
     # The first line is seed IDs
-    self.seeds = re.split( "\D", self.seedInfo[0] )[1:]
+    self.seeds = re.split( "\D+", self.seedInfo[0] )[1:]
+    DebugPrinter.debugPrint( self.seeds )
 
     # start reading from line 3
     i = 2
@@ -95,7 +91,7 @@ class SeedSolver :
       # x-to-y
       # (blank lines)
       # three numbers describing a mapping
-      DebugPrinter.debugPrint( line )
+#      DebugPrinter.debugPrint( line )
       if textMatch :
         mapSource = textMatch.group(1)
         mapDest = textMatch.group(2)
@@ -113,7 +109,40 @@ class SeedSolver :
   #####
 
   def processSeedLocations( self ) :
-    print ( "hello world" )
+    for seed in self.seeds :
+      DebugPrinter.debugPrint( seed )
+
+      key = "seed"
+      thisSeed = SeedMap()
+      thisSeed.thingsMapped[ key ] = int(seed)
+      while ( key in self.mappers ) :
+        #Assumption - in part 1, there's only one mapping TEXT
+        # (so if there's seeds to soil, there is no seeds to light)
+        nextKey = list( self.mappers[ key ].keys() )[0]
+
+        #default to same value
+        thisSeed.thingsMapped[ nextKey ] = thisSeed.thingsMapped[ key ]
+
+        for range in self.mappers[ key ][ nextKey ] :
+          if thisSeed.thingsMapped[ key ] >= range.sourceStart and thisSeed.thingsMapped[ key ] < ( range.sourceStart + range.range ) :
+            thisSeed.thingsMapped[ nextKey ] = range.destStart + ( thisSeed.thingsMapped[ key ] - range.sourceStart )
+            DebugPrinter.debugPrint( str( range.sourceStart ) + " :: " + str( range.destStart ) + " :: " + str( range.range ) )
+            DebugPrinter.debugPrint( str( range.destStart ) + " + " + str( thisSeed.thingsMapped[ key ] ) + " - " + str( range.sourceStart ) + " = " + str( thisSeed.thingsMapped[ key ] - range.sourceStart ) ) 
+            DebugPrinter.debugPrint( key + " -> " + nextKey + " = " + str( thisSeed.thingsMapped[ nextKey ] ) )
+            break
+        key = nextKey
+        #DebugPrinter.debugPrint( key + " = " + str( thisSeed.thingsMapped[ key ] ) )
+      DebugPrinter.debugPrint( "-------------" )
+      self.allTheSeeds.append( thisSeed )
+
+  #####
+
+  def getLowestField( self ) :
+    lowest = self.allTheSeeds[0].thingsMapped[ "location" ]
+    for seed in self.allTheSeeds :
+      #DebugPrinter.debugPrint( str( seed.thingsMapped["location"] ) )
+      lowest = min( lowest, seed.thingsMapped["location"])
+    return lowest
 
   #####
 
@@ -122,6 +151,7 @@ class SeedSolver :
     self.processArguments()
     self.processInput()
     self.processSeedLocations()
+    print( self.getLowestField() )
 
 
 if __name__ == "__main__":

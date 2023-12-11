@@ -27,6 +27,9 @@ class StarSolver :
     self.sumTotal = 0
     self.allLines = []
     self.nodes = []
+    self.oneBlanks = []
+    self.twoBlanks = []
+    self.multiplier = 1000000
 
   #####
 
@@ -57,21 +60,19 @@ class StarSolver :
     while i < len( self.allLines[0] ) :
       col = [ x[i] for x in self.allLines ]
       if col.count( galaxyChar ) == 0 :
-        self.allLines = [ ( x[:i] + "." + x[i:]) for x in self.allLines ]
-        i += 1 # accounts for the new blank
+        self.twoBlanks.append(i)
       i += 1
 
     # don't add the space in part 1 - we only need the coordinates
     i = 0
-    blanks = 0
     while i < len( self.allLines ) :
       stars = self.allLines[ i ]
       index = stars.find( galaxyChar, 0 )
       if index == -1 :
-        blanks += 1
+        self.oneBlanks.append(i)
       else :
         while index >= 0 :
-          self.nodes.append( ( i + blanks, index ) )
+          self.nodes.append( ( i, index ) )
           index = stars.find( galaxyChar, index+1 )
       i += 1
 
@@ -88,13 +89,20 @@ class StarSolver :
         # so just math the up=down and left-rigth distance
         y = abs( self.nodes[i][0] - self.nodes[j][0])
         x = abs( self.nodes[i][1] - self.nodes[j][1])
-        totalDistance += x + y
+
+        # add blanks
+        xPath =  [ p+min(self.nodes[i][1], self.nodes[j][1]) for p in list( range( abs(self.nodes[i][1] - self.nodes[j][1]) ) ) ]
+        xBoost = len( [p for p in xPath if p in self.twoBlanks ] )
+
+        yPath =  [ p+min(self.nodes[i][0], self.nodes[j][0]) for p in list( range( abs(self.nodes[i][0] - self.nodes[j][0]) ) ) ]
+        yBoost = len( [p for p in yPath if p in self.oneBlanks ] )
+
+
+        totalDistance += x + y + ( ( self.multiplier - 1 ) * ( xBoost + yBoost ) )
         j += 1
       i += 1
 
     print ( totalDistance )
-    # 10228230 right
-    # 10228230
 
   #####
 

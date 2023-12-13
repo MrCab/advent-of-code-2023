@@ -25,7 +25,7 @@ class LineOfSprings :
 
   def __init__ ( self, line, nums ) :
     self.linup = line.replace( self.workingSpring, self.newWorkingSpring ).replace( self.oldMaybe, self.newMaybe )
-    self.picross = [ int(x) for x in nums.split(",") ]
+    self.picross = nums
     self.theGodPattern = ""
 
   def countPossibilities( self ) :
@@ -93,7 +93,13 @@ class SpringSolver :
 
     for line in self.allLines :
       x = line.split(" ")
-      self.springLines.append( LineOfSprings( x[0], x[1] ) )
+
+      # part 2
+      springLine = x[0] + "?" + x[0] + "?" + x[0] + "?" + x[0] + "?" + x[0]
+      picrossLine = [ int(x) for x in x[1].split(",") ] * 5
+
+
+      self.springLines.append( LineOfSprings( springLine, picrossLine ) )
 
   #####
 
